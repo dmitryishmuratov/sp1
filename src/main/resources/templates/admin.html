@@ -1,0 +1,174 @@
+<!doctype html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../static/css/main.css" th:href="@{/css/main.css}" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+    <div th:replace="fragments/header :: header-css"></div>
+    <!--<div th:replace="fragments/navbar :: navbar-css"></div>-->
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+<div class="container-fluid d-flex h-100 flex-column">
+    <div class="row" id="row1">
+        <div id="menuVertical" class="navbar col-2 sidebar bg-light">
+            <nav class="nav  nav-pills nav-fill flex-column fixed-top position-absolute">
+                <a class="nav-item nav-link active" th:href="@{/admin}">Admin</a>
+                <a class="nav-item nav-link" th:href="@{/user}">User</a>
+            </nav>
+        </div>
+        <!--<div th:replace="fragments/navbar :: navbar"></div>-->
+        <div class="col-10">
+            <p><h2>Admin panel</h2>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                       aria-controls="home" aria-selected="true">User table</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                       aria-controls="profile" aria-selected="false">New user</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <table class="table table-striped">
+                        <h2 class="text-center table-active">All users</h2>
+                        <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${users}" items="${requestScope.users}" var="user">
+                            <td th:text="${user.id}"></td>
+                            <td th:text="${user.username}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td th:text="${#strings.replace(
+                    #strings.replace(user.roles, '[',''),
+                    ']','')}"></td>
+                            <td>
+                                <!--<button type="button" class="btn btn-primary" data-toggle="modal" th:href="'#editModal'+${user.id}">Edit</button>-->
+                                <!--<form action="#" th:href="@{admin/delete/{id}(id=${user.id})}" method="get">-->
+                                <!--<button type="button" class="btn btn-primary">Delete</button>-->
+                                <!--</form>-->
+
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-secondary" data-toggle="modal" th:href="'#editModal'+${user.id}">Update</button>
+                                    <a href="#" th:href="@{admin/delete/{id}(id=${user.id})}" method="get" class="btn btn-secondary" role="button" aria-pressed="true">Delete</a>
+                                </div>
+
+                            </td>
+                            <div class="modal fade" th:id="'editModal'+${user.id}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Make changes</h4>
+                                            <button class="close" data-dismiss="modal">X</button>
+                                        </div>
+                                        <div class="modal-body col-sm text-center">
+                                            <div class="flex-column">
+
+                                                <form class="bg-light" method="post" action="#" th:action="@{/admin/edit}" th:object="${user}">
+                                                    <div class="form-group ">
+                                                        <h4>Id</h4>
+                                                        <input th:value="${user.id}" name="id" readonly class="form-control">
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <h4>Name</h4>
+                                                        <input th:value="${user.username}" name="username" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <h4>Email</h4>
+                                                        <input th:value="${user.email}" name="email" type="email" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <h4>Password</h4>
+                                                        <input  name="password" type="password" class="form-control" placeholder="Change password">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <h4>Role</h4>
+                                                        <select class="custom-select form-control text-center"
+                                                                type="text" name="role">
+                                                            <option selected><span th:text="${user.roles}">role</span>
+                                                            </option>
+                                                            <option value="USER">ROLE_USER</option>
+                                                            <option value="Admin">ROLE_ADMIN</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" th:value="${user.id}">
+                                                        <button type="submit" class="btn btn-success btn-block">Update</button>
+                                                    </div>
+                                                </form>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade text-center" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="bg-light"><h2>Add new user</h2></div>
+                    <div class="flex-column col-md-4">
+                        <form class="bg-light" method="post" action="#" th:action="@{/admin/add}" th:object="${user}">
+                            <div class="form-group ">
+                                <label for="exampleInputUsername">Name</label>
+                                <input type="text" class="form-control" id="exampleInputUsername"
+                                       name="Username" placeholder="Username">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email"
+                                       name="email" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input type="password" class="form-control" id="exampleInputPassword1"
+                                       name="password" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <label>Role</label>
+                                <select class="custom-select form-control text-center" name="role" type="text">
+                                    <option selected value="USER">USER</option>
+                                    <option value="Admin">ADMIN</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Add new user</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</body>
+</html>
